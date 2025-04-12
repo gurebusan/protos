@@ -51,8 +51,12 @@ message LoginResponse {
 }
 
 message IsAdminRequest {
-    int64 requsting_user_id = 1 [(validate.rules).int64.gt = 0];
-    int64 target_user_id = 2 [(validate.rules).int64.gt = 0];
+   int64 requsting_user_id = 1 [(validate.rules).int64.gt = 0];
+    string password = 2 [(validate.rules).string = {
+        min_len: 8,
+        pattern: "^[a-zA-Z0-9!@#$%^&*]+$"
+        }];
+    int64 target_user_id = 3 [(validate.rules).int64.gt = 0];
 }
 
 message IsAdminResponse {
@@ -61,7 +65,11 @@ message IsAdminResponse {
 
 message GrantAdminRequest {
     int64 requsting_user_id = 1 [(validate.rules).int64.gt = 0];
-    int64 target_user_id = 2 [(validate.rules).int64.gt = 0];
+    string password = 2 [(validate.rules).string = {
+        min_len: 8,
+        pattern: "^[a-zA-Z0-9!@#$%^&*]+$"
+        }];
+    int64 target_user_id = 3 [(validate.rules).int64.gt = 0];
 }
 message GrantAdminResponse {
     bool success = 1;
@@ -69,7 +77,11 @@ message GrantAdminResponse {
 
 message RevokeAdminRequest {
     int64 requsting_user_id = 1 [(validate.rules).int64.gt = 0];
-    int64 target_user_id = 2 [(validate.rules).int64.gt = 0];
+    string password = 2 [(validate.rules).string = {
+        min_len: 8,
+        pattern: "^[a-zA-Z0-9!@#$%^&*]+$"
+        }];
+    int64 target_user_id = 3 [(validate.rules).int64.gt = 0];
 }
 message RevokeAdminResponse {
     bool success = 1;

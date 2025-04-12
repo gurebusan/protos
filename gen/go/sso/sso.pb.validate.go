@@ -731,6 +731,28 @@ func (m *IsAdminRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetPassword()) < 8 {
+		err := IsAdminRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at least 8 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_IsAdminRequest_Password_Pattern.MatchString(m.GetPassword()) {
+		err := IsAdminRequestValidationError{
+			field:  "Password",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9!@#$%^&*]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetTargetUserId() <= 0 {
 		err := IsAdminRequestValidationError{
 			field:  "TargetUserId",
@@ -819,6 +841,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = IsAdminRequestValidationError{}
+
+var _IsAdminRequest_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*]+$")
 
 // Validate checks the field values on IsAdminResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -955,6 +979,28 @@ func (m *GrantAdminRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetPassword()) < 8 {
+		err := GrantAdminRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at least 8 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_GrantAdminRequest_Password_Pattern.MatchString(m.GetPassword()) {
+		err := GrantAdminRequestValidationError{
+			field:  "Password",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9!@#$%^&*]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetTargetUserId() <= 0 {
 		err := GrantAdminRequestValidationError{
 			field:  "TargetUserId",
@@ -1045,6 +1091,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GrantAdminRequestValidationError{}
+
+var _GrantAdminRequest_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*]+$")
 
 // Validate checks the field values on GrantAdminResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1183,6 +1231,28 @@ func (m *RevokeAdminRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetPassword()) < 8 {
+		err := RevokeAdminRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at least 8 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_RevokeAdminRequest_Password_Pattern.MatchString(m.GetPassword()) {
+		err := RevokeAdminRequestValidationError{
+			field:  "Password",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9!@#$%^&*]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetTargetUserId() <= 0 {
 		err := RevokeAdminRequestValidationError{
 			field:  "TargetUserId",
@@ -1273,6 +1343,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RevokeAdminRequestValidationError{}
+
+var _RevokeAdminRequest_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*]+$")
 
 // Validate checks the field values on RevokeAdminResponse with the rules
 // defined in the proto definition for this message. If any rules are

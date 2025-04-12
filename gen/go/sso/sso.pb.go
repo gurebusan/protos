@@ -271,7 +271,8 @@ func (x *LoginResponse) GetToken() string {
 type IsAdminRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	RequstingUserId int64                  `protobuf:"varint,1,opt,name=requsting_user_id,json=requstingUserId,proto3" json:"requsting_user_id,omitempty"`
-	TargetUserId    int64                  `protobuf:"varint,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TargetUserId    int64                  `protobuf:"varint,3,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -311,6 +312,13 @@ func (x *IsAdminRequest) GetRequstingUserId() int64 {
 		return x.RequstingUserId
 	}
 	return 0
+}
+
+func (x *IsAdminRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
 }
 
 func (x *IsAdminRequest) GetTargetUserId() int64 {
@@ -367,7 +375,8 @@ func (x *IsAdminResponse) GetIsAdmin() bool {
 type GrantAdminRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	RequstingUserId int64                  `protobuf:"varint,1,opt,name=requsting_user_id,json=requstingUserId,proto3" json:"requsting_user_id,omitempty"`
-	TargetUserId    int64                  `protobuf:"varint,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TargetUserId    int64                  `protobuf:"varint,3,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -407,6 +416,13 @@ func (x *GrantAdminRequest) GetRequstingUserId() int64 {
 		return x.RequstingUserId
 	}
 	return 0
+}
+
+func (x *GrantAdminRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
 }
 
 func (x *GrantAdminRequest) GetTargetUserId() int64 {
@@ -463,7 +479,8 @@ func (x *GrantAdminResponse) GetSuccess() bool {
 type RevokeAdminRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	RequstingUserId int64                  `protobuf:"varint,1,opt,name=requsting_user_id,json=requstingUserId,proto3" json:"requsting_user_id,omitempty"`
-	TargetUserId    int64                  `protobuf:"varint,2,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	TargetUserId    int64                  `protobuf:"varint,3,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -503,6 +520,13 @@ func (x *RevokeAdminRequest) GetRequstingUserId() int64 {
 		return x.RequstingUserId
 	}
 	return 0
+}
+
+func (x *RevokeAdminRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
 }
 
 func (x *RevokeAdminRequest) GetTargetUserId() int64 {
@@ -575,20 +599,23 @@ const file_sso_sso_proto_rawDesc = "" +
 	"\n" +
 	"identifier\"%\n" +
 	"\rLoginResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"t\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"\xb1\x01\n" +
 	"\x0eIsAdminRequest\x123\n" +
-	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12-\n" +
-	"\x0etarget_user_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\",\n" +
+	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12;\n" +
+	"\bpassword\x18\x02 \x01(\tB\x1f\xfaB\x1cr\x1a\x10\b2\x16^[a-zA-Z0-9!@#$%^&*]+$R\bpassword\x12-\n" +
+	"\x0etarget_user_id\x18\x03 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\",\n" +
 	"\x0fIsAdminResponse\x12\x19\n" +
-	"\bis_admin\x18\x01 \x01(\bR\aisAdmin\"w\n" +
+	"\bis_admin\x18\x01 \x01(\bR\aisAdmin\"\xb4\x01\n" +
 	"\x11GrantAdminRequest\x123\n" +
-	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12-\n" +
-	"\x0etarget_user_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\".\n" +
+	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12;\n" +
+	"\bpassword\x18\x02 \x01(\tB\x1f\xfaB\x1cr\x1a\x10\b2\x16^[a-zA-Z0-9!@#$%^&*]+$R\bpassword\x12-\n" +
+	"\x0etarget_user_id\x18\x03 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\".\n" +
 	"\x12GrantAdminResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"x\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xb5\x01\n" +
 	"\x12RevokeAdminRequest\x123\n" +
-	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12-\n" +
-	"\x0etarget_user_id\x18\x02 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\"/\n" +
+	"\x11requsting_user_id\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\x0frequstingUserId\x12;\n" +
+	"\bpassword\x18\x02 \x01(\tB\x1f\xfaB\x1cr\x1a\x10\b2\x16^[a-zA-Z0-9!@#$%^&*]+$R\bpassword\x12-\n" +
+	"\x0etarget_user_id\x18\x03 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\ftargetUserId\"/\n" +
 	"\x13RevokeAdminResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb0\x02\n" +
 	"\x04Auth\x129\n" +
