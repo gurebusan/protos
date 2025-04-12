@@ -69,6 +69,28 @@ func (m *RegisterRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 20 {
+		err := RegisterRequestValidationError{
+			field:  "Username",
+			reason: "value length must be between 3 and 20 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_RegisterRequest_Username_Pattern.MatchString(m.GetUsername()) {
+		err := RegisterRequestValidationError{
+			field:  "Username",
+			reason: "value does not match regex pattern \"^[a-zA-Z0-9_]+$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetPassword()) < 8 {
 		err := RegisterRequestValidationError{
 			field:  "Password",
@@ -219,6 +241,8 @@ var _ interface {
 	ErrorName() string
 } = RegisterRequestValidationError{}
 
+var _RegisterRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9_]+$")
+
 var _RegisterRequest_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*]+$")
 
 // Validate checks the field values on RegisterResponse with the rules defined
@@ -345,18 +369,6 @@ func (m *LoginRequest) validate(all bool) error {
 
 	var errors []error
 
-	if err := m._validateEmail(m.GetEmail()); err != nil {
-		err = LoginRequestValidationError{
-			field:  "Email",
-			reason: "value must be a valid email address",
-			cause:  err,
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetPassword()) < 8 {
 		err := LoginRequestValidationError{
 			field:  "Password",
@@ -388,6 +400,69 @@ func (m *LoginRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	switch v := m.Identifier.(type) {
+	case *LoginRequest_Email:
+		if v == nil {
+			err := LoginRequestValidationError{
+				field:  "Identifier",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if err := m._validateEmail(m.GetEmail()); err != nil {
+			err = LoginRequestValidationError{
+				field:  "Email",
+				reason: "value must be a valid email address",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	case *LoginRequest_Username:
+		if v == nil {
+			err := LoginRequestValidationError{
+				field:  "Identifier",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if l := utf8.RuneCountInString(m.GetUsername()); l < 3 || l > 20 {
+			err := LoginRequestValidationError{
+				field:  "Username",
+				reason: "value length must be between 3 and 20 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if !_LoginRequest_Username_Pattern.MatchString(m.GetUsername()) {
+			err := LoginRequestValidationError{
+				field:  "Username",
+				reason: "value does not match regex pattern \"^[a-zA-Z0-9_]+$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -517,6 +592,8 @@ var _ interface {
 	ErrorName() string
 } = LoginRequestValidationError{}
 
+var _LoginRequest_Username_Pattern = regexp.MustCompile("^[a-zA-Z0-9_]+$")
+
 var _LoginRequest_Password_Pattern = regexp.MustCompile("^[a-zA-Z0-9!@#$%^&*]+$")
 
 // Validate checks the field values on LoginResponse with the rules defined in
@@ -643,9 +720,20 @@ func (m *IsAdminRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetUserId() <= 0 {
+	if m.GetRequstingUserId() <= 0 {
 		err := IsAdminRequestValidationError{
-			field:  "UserId",
+			field:  "RequstingUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetTargetUserId() <= 0 {
+		err := IsAdminRequestValidationError{
+			field:  "TargetUserId",
 			reason: "value must be greater than 0",
 		}
 		if !all {
@@ -833,3 +921,459 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = IsAdminResponseValidationError{}
+
+// Validate checks the field values on GrantAdminRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GrantAdminRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantAdminRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantAdminRequestMultiError, or nil if none found.
+func (m *GrantAdminRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantAdminRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetRequstingUserId() <= 0 {
+		err := GrantAdminRequestValidationError{
+			field:  "RequstingUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetTargetUserId() <= 0 {
+		err := GrantAdminRequestValidationError{
+			field:  "TargetUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GrantAdminRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GrantAdminRequestMultiError is an error wrapping multiple validation errors
+// returned by GrantAdminRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GrantAdminRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantAdminRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantAdminRequestMultiError) AllErrors() []error { return m }
+
+// GrantAdminRequestValidationError is the validation error returned by
+// GrantAdminRequest.Validate if the designated constraints aren't met.
+type GrantAdminRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantAdminRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantAdminRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantAdminRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantAdminRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantAdminRequestValidationError) ErrorName() string {
+	return "GrantAdminRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantAdminRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantAdminRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantAdminRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantAdminRequestValidationError{}
+
+// Validate checks the field values on GrantAdminResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GrantAdminResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantAdminResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantAdminResponseMultiError, or nil if none found.
+func (m *GrantAdminResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantAdminResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return GrantAdminResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GrantAdminResponseMultiError is an error wrapping multiple validation errors
+// returned by GrantAdminResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GrantAdminResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantAdminResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantAdminResponseMultiError) AllErrors() []error { return m }
+
+// GrantAdminResponseValidationError is the validation error returned by
+// GrantAdminResponse.Validate if the designated constraints aren't met.
+type GrantAdminResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantAdminResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantAdminResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantAdminResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantAdminResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantAdminResponseValidationError) ErrorName() string {
+	return "GrantAdminResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantAdminResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantAdminResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantAdminResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantAdminResponseValidationError{}
+
+// Validate checks the field values on RevokeAdminRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeAdminRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeAdminRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeAdminRequestMultiError, or nil if none found.
+func (m *RevokeAdminRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeAdminRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetRequstingUserId() <= 0 {
+		err := RevokeAdminRequestValidationError{
+			field:  "RequstingUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetTargetUserId() <= 0 {
+		err := RevokeAdminRequestValidationError{
+			field:  "TargetUserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return RevokeAdminRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeAdminRequestMultiError is an error wrapping multiple validation errors
+// returned by RevokeAdminRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RevokeAdminRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeAdminRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeAdminRequestMultiError) AllErrors() []error { return m }
+
+// RevokeAdminRequestValidationError is the validation error returned by
+// RevokeAdminRequest.Validate if the designated constraints aren't met.
+type RevokeAdminRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeAdminRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeAdminRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeAdminRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeAdminRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeAdminRequestValidationError) ErrorName() string {
+	return "RevokeAdminRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeAdminRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeAdminRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeAdminRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeAdminRequestValidationError{}
+
+// Validate checks the field values on RevokeAdminResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeAdminResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeAdminResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeAdminResponseMultiError, or nil if none found.
+func (m *RevokeAdminResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeAdminResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return RevokeAdminResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeAdminResponseMultiError is an error wrapping multiple validation
+// errors returned by RevokeAdminResponse.ValidateAll() if the designated
+// constraints aren't met.
+type RevokeAdminResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeAdminResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeAdminResponseMultiError) AllErrors() []error { return m }
+
+// RevokeAdminResponseValidationError is the validation error returned by
+// RevokeAdminResponse.Validate if the designated constraints aren't met.
+type RevokeAdminResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeAdminResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeAdminResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeAdminResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeAdminResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeAdminResponseValidationError) ErrorName() string {
+	return "RevokeAdminResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeAdminResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeAdminResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeAdminResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeAdminResponseValidationError{}
